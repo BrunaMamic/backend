@@ -9,7 +9,7 @@ class OrderNotifierSubscriber {
 
   handleOrder = async (data) => {
     const slackWebhookUrl =
-      "xoxb-5842684770389-5869406410352-xFDtwrDC7Sw7lCGXoJ8cf08w";
+      "xoxb-5842684770389-5869406410352-5wr3aTmn9avYWln0EAB7PAEF";
     const slackChannel = "#test";
 
     const slackClient = new WebClient(slackWebhookUrl);
@@ -55,15 +55,15 @@ class OrderNotifierSubscriber {
             type: "mrkdwn",
             text: `*<http://localhost:3000/shop|${item.title}>*\nQuantity: ${
               item.quantity
-            } \n ${item.description}\n ${(item.total / 100).toFixed(2)}${
+            } \n *${item.description}\n ${(item.total / 100).toFixed(2)}${
               order.region.currency_code === "usd" ? "£" : "€"
-            }`,
+            }*`,
           },
           accessory: {
             type: "image",
             image_url: `${item.thumbnail?.replace(
               "http://localhost:9000",
-              "https://dca8-93-143-52-59.ngrok.io"
+              "https://9c19-93-140-226-49.ngrok.io"
             )}`,
             alt_text: "Product image",
           },
@@ -82,7 +82,14 @@ class OrderNotifierSubscriber {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: `Order with *${order.items.length} items* was just submited by *${order.customer.first_name} ${order.customer.last_name}* ! \n_it will be shipped soon!_`,
+            text: "🎉🎉 New Order 🎉🎉",
+          },
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `Order with *${order.items.length} items* was just submited by *${order.customer.first_name} ${order.customer.last_name}* ! \n_it will be shipped with **!_ `,
           },
         },
         {
@@ -93,7 +100,34 @@ class OrderNotifierSubscriber {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: `*DATE:* ${formattedDate}     *ORDER No:* ${order.display_id}! `,
+            text: `*DATE:* ${formattedDate}     *ORDER No:* ${order.display_id} `,
+          },
+        },
+        {
+          type: "divider",
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: "_CUSTOMER INFO_",
+          },
+          accessory: {
+            type: "overflow",
+            options: [
+              {
+                text: {
+                  type: "plain_text",
+                  text: `${order.customer.first_name} ${
+                    order.customer.last_name
+                  }\n EMAIL: ${order.customer.email}\n PHONE: ${
+                    order.phone ?? "+12345667"
+                  }`,
+                  emoji: true,
+                },
+                value: "value-0",
+              },
+            ],
           },
         },
         {
@@ -107,20 +141,22 @@ class OrderNotifierSubscriber {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: `*SUBTOTAL:* ${(order.subtotal / 100).toFixed(2)} ${
+            text: `*subtotal:* ${(order.subtotal / 100).toFixed(2)} ${
               order.region.currency_code === "usd" ? "£" : "€"
-            }\n*SHIPPING:* OVO NAPRAVI! \n*DISCOUNT TOTAL:* ${
-              order.discount_total
-            }${
+            }\n*shipping:* ${(order.shipping_methods[0].price / 100).toFixed(
+              2
+            )} ${
               order.region.currency_code === "usd" ? "£" : "€"
-            } \n*SUBTOTAL:* ${(order.total / 100).toFixed(2)} ${
+            } \n*discount total:* ${order.discount_total}${
+              order.region.currency_code === "usd" ? "£" : "€"
+            } \n*subtotal:* ${(order.total / 100).toFixed(2)} ${
               order.region.currency_code === "usd" ? "£" : "€"
             }`,
           },
         },
         {
-            type: "divider",
-          },
+          type: "divider",
+        },
       ];
 
       await slackClient.chat.postMessage({
