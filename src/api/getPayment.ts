@@ -1,5 +1,5 @@
 import { Router } from "express";
-import  StripeCustomerService from "../services/index"; // Import your StripeCustomerService
+import  StripeCustomerService from "../services/stripe-customer"; // Import your StripeCustomerService
 import cors from "cors";
 import { getConfigFile, parseCorsOrigins } from "medusa-core-utils";
 import { ConfigModule } from "@medusajs/medusa/dist/types/global";

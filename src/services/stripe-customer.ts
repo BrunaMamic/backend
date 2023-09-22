@@ -23,6 +23,9 @@ class StripeCustomerService extends BaseService {
       if (response.id) {
         paymentMethods.push({
           last4: response.card.last4,
+          name: response.billing_details.name,
+          experation: response.card.exp_month + "/" + response.card.exp_year,
+          brand: response.card.brand,
         });
       }
     }
